@@ -1,0 +1,9 @@
+{
+	"name": "pipelineconfig-DEV",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "4b183c84-825f-40b0-b163-65aa898f4193",
+		"tenantId": "2a6be8bf-a2c3-47f2-9ae3-0d8d5512060f"
+	}
+}
