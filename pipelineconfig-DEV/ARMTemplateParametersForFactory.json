@@ -5,6 +5,9 @@
 		"factoryName": {
 			"value": "pipelineconfig-DEV"
 		},
+		"AzureSqlDatabase1_password": {
+			"value": ""
+		},
 		"LS_ADLS_accountKey": {
 			"value": ""
 		},
@@ -16,6 +19,15 @@
 		},
 		"LS_source_container_connectionString": {
 			"value": ""
+		},
+		"AzureSqlDatabase1_properties_typeProperties_server": {
+			"value": "azuresqlsql.database.windows.net"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_database": {
+			"value": "azuresqldatabase"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_userName": {
+			"value": "admin123"
 		},
 		"LS_ADLS_properties_typeProperties_url": {
 			"value": "https://adlsstroageaccount.dfs.core.windows.net/"
