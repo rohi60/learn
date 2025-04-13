@@ -520,6 +520,106 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Stored procedure1",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[dbo].[sp_InsertLoadHistory]",
+							"storedProcedureParameters": {
+								"@data_factory": {
+									"value": {
+										"value": "@pipeline().parameters.data_factory",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"@load_type": {
+									"value": {
+										"value": "@pipeline().parameters.load_type",
+										"type": "Expression"
+									},
+									"type": "Int16"
+								},
+								"@load_sink": {
+									"value": {
+										"value": "@pipeline().parameters.load_sink",
+										"type": "Expression"
+									},
+									"type": "Int16"
+								},
+								"@job_rerun": {
+									"value": {
+										"value": "@pipeline().parameters.job_rerun",
+										"type": "Expression"
+									},
+									"type": "Boolean"
+								},
+								"@success": {
+									"value": {
+										"value": "@pipeline().parameters.success",
+										"type": "Expression"
+									},
+									"type": "Boolean"
+								},
+								"@record_count": {
+									"value": {
+										"value": "@pipeline().parameters.record_count",
+										"type": "Expression"
+									},
+									"type": "Int16"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "LS_sqlserver1",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"data_factory": {
+						"type": "string"
+					},
+					"load_type": {
+						"type": "int"
+					},
+					"load_sink": {
+						"type": "string"
+					},
+					"job_rerun": {
+						"type": "bool"
+					},
+					"success": {
+						"type": "bool"
+					},
+					"record_count": {
+						"type": "int"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_sqlserver1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/pipeline_blob_blob')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -743,241 +843,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/DS_source1')]",
 				"[concat(variables('factoryId'), '/datasets/DS_Azuresql_admin123')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pipeline_multiplefiles_singlefile')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "pipeline_multiplefiles_singlefile",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "ExcelSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"wildcardFolderPath": "source",
-									"wildcardFileName": "*",
-									"enablePartitionDiscovery": false
-								}
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings",
-									"copyBehavior": "MergeFiles"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".csv"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"name": "SalesTerritoryCountry",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "SalesTerritoryCountry",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "SalesTerritoryGroup",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "SalesTerritoryGroup",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "SalesOrderNumber",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "SalesOrderNumber",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "EnglishProductCategoryName",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "EnglishProductCategoryName",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "EnglishProductSubcategoryName",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "EnglishProductSubcategoryName",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "ProductKey",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "ProductKey",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "EnglishProductName",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "EnglishProductName",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Color",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Color",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "OrderQuantity",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "OrderQuantity",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "UnitPrice",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "UnitPrice",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "OrderDate",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "OrderDate",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "DueDate",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "DueDate",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "ShipDate",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "ShipDate",
-											"type": "String",
-											"physicalType": "String"
-										}
-									}
-								],
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "DS_source1",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "DS_sinkdataset",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DS_source1')]",
-				"[concat(variables('factoryId'), '/datasets/DS_sinkdataset')]"
 			]
 		}
 	]
