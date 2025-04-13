@@ -1,0 +1,21 @@
+{
+	"name": "DS_source2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ADLS",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": "Europe",
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Sales-Europe.xlsx",
+				"fileSystem": "storage"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": []
+	}
+}

@@ -3,14 +3,15 @@
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LS_sqlserver1",
-			"type": "LinkedServiceReference"
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"username ": "rohid",
+				"password": "Login123$",
+				"database": "AdventureWorks2019"
+			}
 		},
 		"annotations": [],
 		"type": "SqlServerTable",
-		"schema": [],
-		"typeProperties": {
-			"schema": "HumanResources",
-			"table": "Department"
-		}
+		"schema": []
 	}
 }
