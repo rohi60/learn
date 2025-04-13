@@ -1,0 +1,75 @@
+{
+	"name": "DS_source1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_source_container",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": "Sheet1",
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "salesEU.xlsx",
+				"folderPath": "source",
+				"container": "sourcecontainer"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": [
+			{
+				"name": "SalesTerritoryCountry",
+				"type": "String"
+			},
+			{
+				"name": "SalesTerritoryGroup",
+				"type": "String"
+			},
+			{
+				"name": "SalesOrderNumber",
+				"type": "String"
+			},
+			{
+				"name": "EnglishProductCategoryName",
+				"type": "String"
+			},
+			{
+				"name": "EnglishProductSubcategoryName",
+				"type": "String"
+			},
+			{
+				"name": "ProductKey",
+				"type": "String"
+			},
+			{
+				"name": "EnglishProductName",
+				"type": "String"
+			},
+			{
+				"name": "Color",
+				"type": "String"
+			},
+			{
+				"name": "OrderQuantity",
+				"type": "String"
+			},
+			{
+				"name": "UnitPrice",
+				"type": "String"
+			},
+			{
+				"name": "OrderDate",
+				"type": "String"
+			},
+			{
+				"name": "DueDate",
+				"type": "String"
+			},
+			{
+				"name": "ShipDate",
+				"type": "String"
+			}
+		]
+	}
+}
