@@ -1,17 +1,6 @@
 {
 	"name": "LS_sqlserver1",
 	"properties": {
-		"parameters": {
-			"username ": {
-				"type": "string"
-			},
-			"password": {
-				"type": "string"
-			},
-			"database": {
-				"type": "string"
-			}
-		},
 		"annotations": [],
 		"type": "SqlServer",
 		"typeProperties": {
