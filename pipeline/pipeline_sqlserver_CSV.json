@@ -1,5 +1,5 @@
 {
-	"name": "pipeline_sqlserver_parqet",
+	"name": "pipeline_sqlserver_CSV",
 	"properties": {
 		"activities": [
 			{
@@ -69,12 +69,14 @@
 									"partitionOption": "None"
 								},
 								"sink": {
-									"type": "ParquetSink",
+									"type": "DelimitedTextSink",
 									"storeSettings": {
 										"type": "AzureBlobFSWriteSettings"
 									},
 									"formatSettings": {
-										"type": "ParquetWriteSettings"
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ""
 									}
 								},
 								"enableStaging": false,
@@ -95,18 +97,8 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "DS_parquet",
-									"type": "DatasetReference",
-									"parameters": {
-										"schemaname": {
-											"value": "@item().schemaname",
-											"type": "Expression"
-										},
-										"tablename": {
-											"value": "@item().tablename",
-											"type": "Expression"
-										}
-									}
+									"referenceName": "DS_source_csv",
+									"type": "DatasetReference"
 								}
 							]
 						}
