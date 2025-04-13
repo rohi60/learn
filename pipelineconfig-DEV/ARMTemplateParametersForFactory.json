@@ -8,11 +8,29 @@
 		"LS_ADLS_accountKey": {
 			"value": ""
 		},
+		"LS_Blobstorage_connectionString": {
+			"value": ""
+		},
+		"LS_sink_connectionString": {
+			"value": ""
+		},
+		"LS_source_container_connectionString": {
+			"value": ""
+		},
 		"LS_ADLS_properties_typeProperties_url": {
 			"value": "https://adlsstroageaccount.dfs.core.windows.net/"
 		},
 		"LS_AzureKeyVault1_properties_typeProperties_baseUrl": {
 			"value": "https://sqlserverkeyss.vault.azure.net/"
+		},
+		"LS_sqlserver1_properties_typeProperties_server": {
+			"value": "LAPTOP-M1KGADF7"
+		},
+		"LS_sqlserver1_properties_typeProperties_database": {
+			"value": "AdventureWorks2019"
+		},
+		"LS_sqlserver1_properties_typeProperties_userName": {
+			"value": "rohid"
 		}
 	}
 }

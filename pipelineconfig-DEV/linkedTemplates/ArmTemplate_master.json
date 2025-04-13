@@ -11,6 +11,18 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'LS_ADLS'"
 		},
+		"LS_Blobstorage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_Blobstorage'"
+		},
+		"LS_sink_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_sink'"
+		},
+		"LS_source_container_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_source_container'"
+		},
 		"LS_ADLS_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://adlsstroageaccount.dfs.core.windows.net/"
@@ -18,6 +30,18 @@
 		"LS_AzureKeyVault1_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://sqlserverkeyss.vault.azure.net/"
+		},
+		"LS_sqlserver1_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "LAPTOP-M1KGADF7"
+		},
+		"LS_sqlserver1_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "AdventureWorks2019"
+		},
+		"LS_sqlserver1_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "rohid"
 		},
 		"containerUri": {
 			"type": "string",
@@ -49,11 +73,29 @@
 					"LS_ADLS_accountKey": {
 						"value": "[parameters('LS_ADLS_accountKey')]"
 					},
+					"LS_Blobstorage_connectionString": {
+						"value": "[parameters('LS_Blobstorage_connectionString')]"
+					},
+					"LS_sink_connectionString": {
+						"value": "[parameters('LS_sink_connectionString')]"
+					},
+					"LS_source_container_connectionString": {
+						"value": "[parameters('LS_source_container_connectionString')]"
+					},
 					"LS_ADLS_properties_typeProperties_url": {
 						"value": "[parameters('LS_ADLS_properties_typeProperties_url')]"
 					},
 					"LS_AzureKeyVault1_properties_typeProperties_baseUrl": {
 						"value": "[parameters('LS_AzureKeyVault1_properties_typeProperties_baseUrl')]"
+					},
+					"LS_sqlserver1_properties_typeProperties_server": {
+						"value": "[parameters('LS_sqlserver1_properties_typeProperties_server')]"
+					},
+					"LS_sqlserver1_properties_typeProperties_database": {
+						"value": "[parameters('LS_sqlserver1_properties_typeProperties_database')]"
+					},
+					"LS_sqlserver1_properties_typeProperties_userName": {
+						"value": "[parameters('LS_sqlserver1_properties_typeProperties_userName')]"
 					}
 				}
 			},
