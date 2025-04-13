@@ -1,8 +1,8 @@
 {
-	"name": "DS_sinkdataset",
+	"name": "DS_source1",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "LS_sink",
+			"referenceName": "LS_source_container",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
@@ -10,8 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "Sales-North-America.xlsx",
-				"container": "sinkcontainer"
+				"container": "sourcecontainer"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
