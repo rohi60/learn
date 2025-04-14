@@ -13,6 +13,156 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/pipeline_email_notification')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "metadatafile",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "DS_source1",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"fieldList": [
+								"size"
+							],
+							"storeSettings": {
+								"type": "AzureBlobStorageReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							}
+						}
+					},
+					{
+						"name": "If Condition1",
+						"type": "IfCondition",
+						"dependsOn": [
+							{
+								"activity": "metadatafile",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@greater(activity('metadatafile').output.size,0)",
+								"type": "Expression"
+							},
+							"ifFalseActivities": [
+								{
+									"name": "Web2",
+									"type": "WebActivity",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"method": "POST",
+										"headers": {},
+										"url": "https://prod-12.southindia.logic.azure.com:443/workflows/2e1328524ae04799a145aa3ba5dc1787/triggers/When_a_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=9GZHDBHZgNeAQVHe6P7cwXmSMlT-VWqNZ6KZPPWmiq8",
+										"body": {
+											"value": "{\n    \"tittle\":\"PIPELINE RUN SUCCESFULLY\",\n    \"message\":\"pipeline completed running\",\n    \"color\":\"green\",\n    \"Emailto\":\"rohidshaik2808@gmail.com\"\n    \"datafactoryname\":\"@{pipeline().DataFactory}\",\n    \"pipelinename\":\"@{pipeline().pipeline}\",\n    \"pipelinerunid\":\"@{pipeline().RunId}\",\n    \"time\":\"@utcNow()\"\n}",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"ifTrueActivities": [
+								{
+									"name": "Copy data1",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "ExcelSource",
+											"storeSettings": {
+												"type": "AzureBlobStorageReadSettings",
+												"recursive": true,
+												"enablePartitionDiscovery": false
+											}
+										},
+										"sink": {
+											"type": "AzureSqlSink",
+											"writeBehavior": "insert",
+											"sqlWriterUseTableLock": false,
+											"tableOption": "autoCreate",
+											"disableMetricsCollection": false
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "DS_source1",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "DS_Azuresql_admin123",
+											"type": "DatasetReference",
+											"parameters": {
+												"tablename": {
+													"value": "@concat('stg_', replace(activity('metadatafile').output.itemName, '.xlsx', ''))",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"variable": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/pipeline_multiplefiles_singlefile')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -347,7 +497,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "SqlServerSource",
-								"sqlReaderQuery": "select \ns.name as schemaname,\nt.name as tablename\nfrom sys.tables t\ninner join sys.schemas s\non s.schema_id = t.schema_id\nwhere s.name in ('dbo','HumanResources','Person','Production','Purchasing','Sales')",
+								"sqlReaderQuery": "select \ns.name as schemaname,\nt.name as tablename\nfrom sys.tables t\ninner join sys.schemas s\non s.schema_id = t.schema_id\nwhere s.name in ('dbo')",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
@@ -436,6 +586,35 @@
 									]
 								}
 							]
+						}
+					},
+					{
+						"name": "Web2",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "ForEach1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {},
+							"url": "https://prod-12.southindia.logic.azure.com:443/workflows/2e1328524ae04799a145aa3ba5dc1787/triggers/When_a_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=9GZHDBHZgNeAQVHe6P7cwXmSMlT-VWqNZ6KZPPWmiq8",
+							"body": {
+								"value": "{\n    \"tittle\":\"PIPELINE RUN SUCCESFULLY\",\n    \"message\":\"pipeline completed running\",\n    \"color\":\"green\",\n    \"datafactoryname\":\"@{pipeline().DataFactory}\",\n    \"pipelinename\":\"@{pipeline().Pipeline}\",\n    \"pipelinerunid\":\"@{pipeline().RunId}\",\n    \"time\":\"@utcNow(), \"\n}",
+								"type": "Expression"
+							}
 						}
 					}
 				],

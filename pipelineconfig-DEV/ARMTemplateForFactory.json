@@ -85,47 +85,44 @@
 						"typeProperties": {
 							"storedProcedureName": "[[dbo].[sp_InsertLoadHistory]",
 							"storedProcedureParameters": {
-								"@data_factory": {
+								"data_factory": {
 									"value": {
-										"value": "@pipeline().parameters.data_factory",
+										"value": "@pipeline().parameters.datafactory",
 										"type": "Expression"
 									},
 									"type": "String"
 								},
-								"@load_type": {
-									"value": {
-										"value": "@pipeline().parameters.load_type",
-										"type": "Expression"
-									},
-									"type": "Int16"
-								},
-								"@load_sink": {
-									"value": {
-										"value": "@pipeline().parameters.load_sink",
-										"type": "Expression"
-									},
-									"type": "Int16"
-								},
-								"@job_rerun": {
-									"value": {
-										"value": "@pipeline().parameters.job_rerun",
-										"type": "Expression"
-									},
+								"job_rerun": {
+									"value": "true",
 									"type": "Boolean"
 								},
-								"@success": {
+								"load_sink": {
 									"value": {
-										"value": "@pipeline().parameters.success",
+										"value": "@pipeline().parameters.loadsink",
 										"type": "Expression"
 									},
-									"type": "Boolean"
+									"type": "String"
 								},
-								"@record_count": {
+								"load_type": {
+									"value": {
+										"value": "@pipeline().parameters.loadtype",
+										"type": "Expression"
+									},
+									"type": "Int32"
+								},
+								"record_count": {
 									"value": {
 										"value": "@pipeline().parameters.record_count",
 										"type": "Expression"
 									},
-									"type": "Int16"
+									"type": "Int32"
+								},
+								"success": {
+									"value": {
+										"value": "@pipeline().parameters.sucess",
+										"type": "Expression"
+									},
+									"type": "Boolean"
 								}
 							}
 						},
@@ -139,23 +136,25 @@
 					"elapsedTimeMetric": {}
 				},
 				"parameters": {
-					"data_factory": {
+					"datafactory": {
 						"type": "string"
 					},
-					"load_type": {
-						"type": "int"
-					},
-					"load_sink": {
+					"loadsink": {
 						"type": "string"
 					},
-					"job_rerun": {
-						"type": "bool"
+					"loadtype": {
+						"type": "string"
 					},
-					"success": {
+					"sucess": {
 						"type": "bool"
 					},
 					"record_count": {
 						"type": "int"
+					}
+				},
+				"variables": {
+					"row_count": {
+						"type": "Integer"
 					}
 				},
 				"annotations": []
@@ -267,7 +266,7 @@
 								"parameters": {}
 							},
 							"fieldList": [
-								"exists"
+								"size"
 							],
 							"storeSettings": {
 								"type": "AzureBlobStorageReadSettings",
@@ -290,7 +289,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"expression": {
-								"value": "@bool(activity('metadatafile').output.exists)",
+								"value": "@greater(activity('metadatafile').output.size,0)",
 								"type": "Expression"
 							},
 							"ifFalseActivities": [
@@ -382,6 +381,11 @@
 				],
 				"policy": {
 					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"variable": {
+						"type": "String"
+					}
 				},
 				"annotations": []
 			},
@@ -646,7 +650,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "SqlServerSource",
-								"sqlReaderQuery": "select \ns.name as schemaname,\nt.name as tablename\nfrom sys.tables t\ninner join sys.schemas s\non s.schema_id = t.schema_id\nwhere s.name in ('dbo','HumanResources','Person','Production','Purchasing','Sales')",
+								"sqlReaderQuery": "select \ns.name as schemaname,\nt.name as tablename\nfrom sys.tables t\ninner join sys.schemas s\non s.schema_id = t.schema_id\nwhere s.name in ('dbo')",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
@@ -735,6 +739,35 @@
 									]
 								}
 							]
+						}
+					},
+					{
+						"name": "Web2",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "ForEach1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {},
+							"url": "https://prod-12.southindia.logic.azure.com:443/workflows/2e1328524ae04799a145aa3ba5dc1787/triggers/When_a_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=9GZHDBHZgNeAQVHe6P7cwXmSMlT-VWqNZ6KZPPWmiq8",
+							"body": {
+								"value": "{\n    \"tittle\":\"PIPELINE RUN SUCCESFULLY\",\n    \"message\":\"pipeline completed running\",\n    \"color\":\"green\",\n    \"datafactoryname\":\"@{pipeline().DataFactory}\",\n    \"pipelinename\":\"@{pipeline().Pipeline}\",\n    \"pipelinerunid\":\"@{pipeline().RunId}\",\n    \"time\":\"@utcNow(), \"\n}",
+								"type": "Expression"
+							}
 						}
 					}
 				],
@@ -1417,6 +1450,42 @@
 			"properties": {
 				"type": "SelfHosted",
 				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline3')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Web2",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {},
+							"url": "https://prod-12.southindia.logic.azure.com:443/workflows/2e1328524ae04799a145aa3ba5dc1787/triggers/When_a_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=9GZHDBHZgNeAQVHe6P7cwXmSMlT-VWqNZ6KZPPWmiq8",
+							"body": {
+								"value": "{\n    \"tittle\":\"PIPELINE RUN SUCCESFULLY\",\n    \"message\":\"pipeline completed running\",\n    \"color\":\"green\",\n    \"Emailto\":\"rohidshaik2808@gmail.com\",\n    \"datafactoryname\":\"@{pipeline().DataFactory}\",\n    \"pipelinename\":\"@{pipeline().Pipeline}\",\n    \"pipelinerunid\":\"@{pipeline().RunId}\",\n    \"time\":\"@utcNow(), \"\n}",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
 			},
 			"dependsOn": []
 		}
