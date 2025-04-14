@@ -10,7 +10,6 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "salesNA_EU.csv",
 				"folderPath": "source",
 				"container": "sourcecontainer"
 			}
