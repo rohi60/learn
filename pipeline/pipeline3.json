@@ -1,0 +1,29 @@
+{
+	"name": "pipeline3",
+	"properties": {
+		"activities": [
+			{
+				"name": "Web2",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"url": "https://prod-12.southindia.logic.azure.com:443/workflows/2e1328524ae04799a145aa3ba5dc1787/triggers/When_a_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=9GZHDBHZgNeAQVHe6P7cwXmSMlT-VWqNZ6KZPPWmiq8",
+					"body": {
+						"value": "{\n    \"tittle\":\"PIPELINE RUN SUCCESFULLY\",\n    \"message\":\"pipeline completed running\",\n    \"color\":\"green\",\n    \"Emailto\":\"rohidshaik2808@gmail.com\",\n    \"datafactoryname\":\"@{pipeline().DataFactory}\",\n    \"pipelinename\":\"@{pipeline().Pipeline}\",\n    \"pipelinerunid\":\"@{pipeline().RunId}\",\n    \"time\":\"@utcNow(), \"\n}",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"annotations": []
+	}
+}

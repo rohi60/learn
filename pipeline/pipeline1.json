@@ -17,47 +17,44 @@
 				"typeProperties": {
 					"storedProcedureName": "[dbo].[sp_InsertLoadHistory]",
 					"storedProcedureParameters": {
-						"@data_factory": {
+						"data_factory": {
 							"value": {
-								"value": "@pipeline().parameters.data_factory",
+								"value": "@pipeline().parameters.datafactory",
 								"type": "Expression"
 							},
 							"type": "String"
 						},
-						"@load_type": {
-							"value": {
-								"value": "@pipeline().parameters.load_type",
-								"type": "Expression"
-							},
-							"type": "Int16"
-						},
-						"@load_sink": {
-							"value": {
-								"value": "@pipeline().parameters.load_sink",
-								"type": "Expression"
-							},
-							"type": "Int16"
-						},
-						"@job_rerun": {
-							"value": {
-								"value": "@pipeline().parameters.job_rerun",
-								"type": "Expression"
-							},
+						"job_rerun": {
+							"value": "true",
 							"type": "Boolean"
 						},
-						"@success": {
+						"load_sink": {
 							"value": {
-								"value": "@pipeline().parameters.success",
+								"value": "@pipeline().parameters.loadsink",
 								"type": "Expression"
 							},
-							"type": "Boolean"
+							"type": "String"
 						},
-						"@record_count": {
+						"load_type": {
+							"value": {
+								"value": "@pipeline().parameters.loadtype",
+								"type": "Expression"
+							},
+							"type": "Int32"
+						},
+						"record_count": {
 							"value": {
 								"value": "@pipeline().parameters.record_count",
 								"type": "Expression"
 							},
-							"type": "Int16"
+							"type": "Int32"
+						},
+						"success": {
+							"value": {
+								"value": "@pipeline().parameters.sucess",
+								"type": "Expression"
+							},
+							"type": "Boolean"
 						}
 					}
 				},
@@ -68,23 +65,25 @@
 			}
 		],
 		"parameters": {
-			"data_factory": {
+			"datafactory": {
 				"type": "string"
 			},
-			"load_type": {
-				"type": "int"
-			},
-			"load_sink": {
+			"loadsink": {
 				"type": "string"
 			},
-			"job_rerun": {
-				"type": "bool"
+			"loadtype": {
+				"type": "string"
 			},
-			"success": {
+			"sucess": {
 				"type": "bool"
 			},
 			"record_count": {
 				"type": "int"
+			}
+		},
+		"variables": {
+			"row_count": {
+				"type": "Integer"
 			}
 		},
 		"annotations": []
