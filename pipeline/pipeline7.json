@@ -1,0 +1,204 @@
+{
+	"name": "pipeline7",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy data_s3_adls_sqlserver",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "BinarySource",
+						"storeSettings": {
+							"type": "AmazonS3ReadSettings",
+							"recursive": true
+						},
+						"formatSettings": {
+							"type": "BinaryReadSettings"
+						}
+					},
+					"enableStaging": false
+				}
+			},
+			{
+				"name": "filecheck",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Copy data_s3_adls_sqlserver",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "ParquetReadSettings"
+						}
+					}
+				}
+			},
+			{
+				"name": "Copy data",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "filecheck",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "ParquetReadSettings"
+						}
+					},
+					"enableStaging": false
+				}
+			},
+			{
+				"name": "Stored procedure",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "set_adls_s3",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[sp_InsertLoadHistory]",
+					"storedProcedureParameters": {
+						"data_factory": {
+							"value": {
+								"value": "@pipeline().parameters.data_factory",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"job_rerun": {
+							"value": "true",
+							"type": "Boolean"
+						},
+						"load_sink": {
+							"value": {
+								"value": "@pipeline().parameters.load_sink",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"load_type": {
+							"value": {
+								"value": "@pipeline().parameters.load_type",
+								"type": "Expression"
+							},
+							"type": "Int32"
+						},
+						"record_count": {
+							"value": {
+								"value": "@variables('rowcount')",
+								"type": "Expression"
+							},
+							"type": "Int32"
+						},
+						"success": {
+							"value": "true",
+							"type": "Boolean"
+						}
+					}
+				}
+			},
+			{
+				"name": "set_adls_s3",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Copy data",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "rowcount",
+					"value": {
+						"value": "@activity('Copy data').output.rowsCopied",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"data_factory": {
+				"type": "string"
+			},
+			"load_sink": {
+				"type": "string"
+			},
+			"load_type": {
+				"type": "int"
+			}
+		},
+		"variables": {
+			"rowcount": {
+				"type": "Integer"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-02-19T15:58:48Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
