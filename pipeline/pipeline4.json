@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "DS_src",
+						"referenceName": "DS_SRC_2",
 						"type": "DatasetReference"
 					},
 					"fieldList": [

@@ -1,0 +1,19 @@
+{
+	"name": "DS_SRC_2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_src",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"folderPath": "source",
+				"container": "sourcecontainer"
+			}
+		},
+		"schema": []
+	}
+}
