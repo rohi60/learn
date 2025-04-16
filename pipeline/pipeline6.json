@@ -1,0 +1,98 @@
+{
+	"name": "pipeline6",
+	"properties": {
+		"activities": [
+			{
+				"name": "ConfigFile Lookup",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"wildcardFolderPath": {
+								"value": "@pipeline().parameters.configPath",
+								"type": "Expression"
+							},
+							"wildcardFileName": {
+								"value": "@pipeline().parameters.configFile",
+								"type": "Expression"
+							},
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "DS_JSON",
+						"type": "DatasetReference",
+						"parameters": {
+							"configPath": {
+								"value": "@pipeline().parameters.configPath",
+								"type": "Expression"
+							},
+							"configFile": {
+								"value": "@pipeline().parameters.configFile",
+								"type": "Expression"
+							},
+							"configFS": {
+								"value": "@pipeline().parameters.configFS",
+								"type": "Expression"
+							}
+						}
+					},
+					"firstRowOnly": false
+				}
+			}
+		],
+		"parameters": {
+			"configFile": {
+				"type": "string",
+				"defaultValue": "@pipeline().parameters.configFile"
+			},
+			"configPath": {
+				"type": "string",
+				"defaultValue": "@pipeline().parameters.configPath"
+			},
+			"configFS": {
+				"type": "string",
+				"defaultValue": "@pipeline().parameters.configFS"
+			}
+		},
+		"variables": {
+			"source_path": {
+				"type": "String"
+			},
+			"source_file": {
+				"type": "String"
+			},
+			"source_sheets": {
+				"type": "Array"
+			},
+			"sink_path": {
+				"type": "String"
+			},
+			"sink_file_pattern": {
+				"type": "String"
+			},
+			"sink_file_extension": {
+				"type": "String"
+			},
+			"file_system": {
+				"type": "String"
+			}
+		},
+		"annotations": []
+	}
+}
