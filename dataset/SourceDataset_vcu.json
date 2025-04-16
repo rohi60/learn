@@ -1,0 +1,12 @@
+{
+	"name": "SourceDataset_vcu",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_sqlserver1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": []
+	}
+}
