@@ -1,0 +1,80 @@
+{
+	"name": "pipeline9",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get Metadata",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"fieldList": [],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "JsonReadSettings"
+					}
+				}
+			},
+			{
+				"name": "Stored procedure",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Get Metadata",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[usp_populate_control_table]",
+					"storedProcedureParameters": {
+						"D_Last_Modified": {
+							"value": {
+								"value": "@activity('Get Metadata').output.lastModified",
+								"type": "Expression"
+							},
+							"type": "Datetime"
+						},
+						"V_Item_Name": {
+							"value": {
+								"value": "@activity('Get Metadata').output.itemName",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"V_Item_Type": {
+							"value": {
+								"value": "@activity('Get Metadata').output.itemType",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2025-02-19T15:58:47Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
