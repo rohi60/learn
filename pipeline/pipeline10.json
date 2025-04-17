@@ -65,7 +65,7 @@
 				"typeProperties": {
 					"variableName": "source_path",
 					"value": {
-						"value": "@activity('ConfigFile Lookup').output.firstRow.raw",
+						"value": "@activity('ConfigFile Lookup').output.firstRow.source_path",
 						"type": "Expression"
 					}
 				}
@@ -89,7 +89,7 @@
 				"typeProperties": {
 					"variableName": "source_path",
 					"value": {
-						"value": "@activity('ConfigFile Lookup').output.firstRow.raw.source_path",
+						"value": "@activity('ConfigFile Lookup').output.firstRow.source_path",
 						"type": "Expression"
 					}
 				}
@@ -113,7 +113,7 @@
 				"typeProperties": {
 					"variableName": "sink_path",
 					"value": {
-						"value": "@activity('ConfigFile Lookup').output.firstRow.raw.sink_path",
+						"value": "@activity('ConfigFile Lookup').output.firstRow.sink_path",
 						"type": "Expression"
 					}
 				}
@@ -137,7 +137,7 @@
 				"typeProperties": {
 					"variableName": "source_sheets",
 					"value": {
-						"value": "@activity('ConfigFile Lookup').output.firstRow.raw.source_sheets",
+						"value": "@activity('ConfigFile Lookup').output.firstRow.source_sheets",
 						"type": "Expression"
 					}
 				}
@@ -227,20 +227,55 @@
 							"userProperties": [],
 							"typeProperties": {
 								"source": {
-									"type": "ExcelSource",
+									"type": "JsonSource",
 									"storeSettings": {
 										"type": "AzureBlobFSReadSettings",
 										"recursive": true,
-										"wildcardFolderPath": {
-											"value": "@concat(variables('source_path'), '/*.xlsx')",
-											"type": "Expression"
-										},
-										"wildcardFileName": "*.xlsx",
 										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "JsonReadSettings"
+									}
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
 									}
 								},
 								"enableStaging": false
-							}
+							},
+							"inputs": [
+								{
+									"referenceName": "DS_JSON",
+									"type": "DatasetReference",
+									"parameters": {
+										"configPath": {
+											"value": "@pipeline().parameters.configPath",
+											"type": "Expression"
+										},
+										"configFile": {
+											"value": "@pipeline().parameters.configFile",
+											"type": "Expression"
+										},
+										"configFS": {
+											"value": "@pipeline().parameters.configFS",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DS_SINK",
+									"type": "DatasetReference"
+								}
+							]
 						}
 					]
 				}
@@ -268,7 +303,7 @@
 				"type": "String"
 			},
 			"source_sheets": {
-				"type": "Array"
+				"type": "String"
 			},
 			"sink_path": {
 				"type": "String"
