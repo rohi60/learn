@@ -1,0 +1,288 @@
+{
+	"name": "pipeline10",
+	"properties": {
+		"activities": [
+			{
+				"name": "ConfigFile Lookup",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "DS_JSON",
+						"type": "DatasetReference",
+						"parameters": {
+							"configPath": {
+								"value": "@pipeline().parameters.configPath",
+								"type": "Expression"
+							},
+							"configFile": {
+								"value": "@pipeline().parameters.configFile",
+								"type": "Expression"
+							},
+							"configFS": {
+								"value": "@pipeline().parameters.configFS",
+								"type": "Expression"
+							}
+						}
+					}
+				}
+			},
+			{
+				"name": "set fileSystem",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "ConfigFile Lookup",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "source_path",
+					"value": {
+						"value": "@activity('ConfigFile Lookup').output.firstRow.raw",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "set sourcepath",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "set fileSystem",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "source_path",
+					"value": {
+						"value": "@activity('ConfigFile Lookup').output.firstRow.raw.source_path",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set sinkpath",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "set sourcepath",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "sink_path",
+					"value": {
+						"value": "@activity('ConfigFile Lookup').output.firstRow.raw.sink_path",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set sourcesheets",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "set fileSystem",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "source_sheets",
+					"value": {
+						"value": "@activity('ConfigFile Lookup').output.firstRow.raw.source_sheets",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "excel sheet to csv",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Set sinkpath",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Set sourcesheets",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@createArray(activity('ConfigFile Lookup').output.firstRow.file_system)",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Set sinkfile",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "sink_file_pattern",
+								"value": {
+									"value": "concat(variables('sink_file_pattern'), '.', variables('sink_file_extension'))",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Set source_sheets",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "source_sheets",
+								"value": {
+									"value": "@item()",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Copy and merge excel to csv",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Set sinkfile",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								},
+								{
+									"activity": "Set source_sheets",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "ExcelSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"wildcardFolderPath": {
+											"value": "@concat(variables('source_path'), '/*.xlsx')",
+											"type": "Expression"
+										},
+										"wildcardFileName": "*.xlsx",
+										"enablePartitionDiscovery": false
+									}
+								},
+								"enableStaging": false
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"configFile": {
+				"type": "string",
+				"defaultValue": "config.json"
+			},
+			"configPath": {
+				"type": "string",
+				"defaultValue": "config"
+			},
+			"configFS": {
+				"type": "string",
+				"defaultValue": "adlsfilesystem"
+			}
+		},
+		"variables": {
+			"source_path": {
+				"type": "String"
+			},
+			"source_file": {
+				"type": "String"
+			},
+			"source_sheets": {
+				"type": "Array"
+			},
+			"sink_path": {
+				"type": "String"
+			},
+			"sink_file_pattern": {
+				"type": "String"
+			},
+			"sink_file_extension": {
+				"type": "String"
+			},
+			"file_system": {
+				"type": "String"
+			}
+		},
+		"annotations": []
+	}
+}
