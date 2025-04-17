@@ -4,7 +4,7 @@
 		"annotations": [],
 		"type": "RestService",
 		"typeProperties": {
-			"url": "https://api.marketstack.com/v1/",
+			"url": "https://api.restful-api.dev/objects",
 			"enableServerCertificateValidation": true,
 			"authenticationType": "Anonymous"
 		}
