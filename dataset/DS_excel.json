@@ -1,31 +1,28 @@
 {
-	"name": "DS_SINK",
+	"name": "DS_excel",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LS_ADLS",
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
-			"filename": {
+			"sheetname": {
 				"type": "string"
 			}
 		},
 		"annotations": [],
-		"type": "DelimitedText",
+		"type": "Excel",
 		"typeProperties": {
+			"sheetName": {
+				"value": "@dataset().sheetname",
+				"type": "Expression"
+			},
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": {
-					"value": "@dataset().filename",
-					"type": "Expression"
-				},
-				"folderPath": "processed",
+				"fileName": "sales_data.xlsx",
+				"folderPath": "raw",
 				"fileSystem": "storage"
-			},
-			"columnDelimiter": ",",
-			"escapeChar": "\\",
-			"firstRowAsHeader": true,
-			"quoteChar": "\""
+			}
 		},
 		"schema": []
 	}

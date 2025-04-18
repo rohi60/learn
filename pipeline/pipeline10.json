@@ -137,7 +137,7 @@
 				"typeProperties": {
 					"variableName": "source_sheets",
 					"value": {
-						"value": "@activity('ConfigFile Lookup').output.firstRow.source_sheets",
+						"value": "@activity('ConfigFile Lookup').output.firstRow.source_sheets[0]",
 						"type": "Expression"
 					}
 				}
@@ -227,44 +227,42 @@
 							"userProperties": [],
 							"typeProperties": {
 								"source": {
-									"type": "JsonSource",
+									"type": "ExcelSource",
 									"storeSettings": {
 										"type": "AzureBlobFSReadSettings",
 										"recursive": true,
 										"enablePartitionDiscovery": false
-									},
-									"formatSettings": {
-										"type": "JsonReadSettings"
 									}
 								},
 								"sink": {
 									"type": "DelimitedTextSink",
 									"storeSettings": {
-										"type": "AzureBlobFSWriteSettings"
+										"type": "AzureBlobFSWriteSettings",
+										"copyBehavior": "MergeFiles"
 									},
 									"formatSettings": {
 										"type": "DelimitedTextWriteSettings",
 										"quoteAllText": true,
-										"fileExtension": ".txt"
+										"fileExtension": ""
 									}
 								},
-								"enableStaging": false
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
 							},
 							"inputs": [
 								{
-									"referenceName": "DS_JSON",
+									"referenceName": "DS_excel",
 									"type": "DatasetReference",
 									"parameters": {
-										"configPath": {
-											"value": "@pipeline().parameters.configPath",
-											"type": "Expression"
-										},
-										"configFile": {
-											"value": "@pipeline().parameters.configFile",
-											"type": "Expression"
-										},
-										"configFS": {
-											"value": "@pipeline().parameters.configFS",
+										"sheetname": {
+											"value": "@item()",
 											"type": "Expression"
 										}
 									}
@@ -273,7 +271,13 @@
 							"outputs": [
 								{
 									"referenceName": "DS_SINK",
-									"type": "DatasetReference"
+									"type": "DatasetReference",
+									"parameters": {
+										"filename": {
+											"value": "@variables('sink_file_pattern')",
+											"type": "Expression"
+										}
+									}
 								}
 							]
 						}
@@ -302,9 +306,6 @@
 			"source_file": {
 				"type": "String"
 			},
-			"source_sheets": {
-				"type": "String"
-			},
 			"sink_path": {
 				"type": "String"
 			},
@@ -315,6 +316,9 @@
 				"type": "String"
 			},
 			"file_system": {
+				"type": "String"
+			},
+			"source_sheets": {
 				"type": "String"
 			}
 		},
