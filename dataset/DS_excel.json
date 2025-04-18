@@ -2,7 +2,7 @@
 	"name": "DS_excel",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "LS_ADLS",
+			"referenceName": "LS_service_adlsfilesystem",
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {

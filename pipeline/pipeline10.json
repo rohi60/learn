@@ -184,34 +184,11 @@
 							}
 						},
 						{
-							"name": "Set source_sheets",
-							"type": "SetVariable",
-							"dependsOn": [],
-							"policy": {
-								"secureOutput": false,
-								"secureInput": false
-							},
-							"userProperties": [],
-							"typeProperties": {
-								"variableName": "source_sheets",
-								"value": {
-									"value": "@item()",
-									"type": "Expression"
-								}
-							}
-						},
-						{
 							"name": "Copy and merge excel to csv",
 							"type": "Copy",
 							"dependsOn": [
 								{
 									"activity": "Set sinkfile",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								},
-								{
-									"activity": "Set source_sheets",
 									"dependencyConditions": [
 										"Succeeded"
 									]
